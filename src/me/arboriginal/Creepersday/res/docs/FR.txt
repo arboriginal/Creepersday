@@ -1,0 +1,281 @@
+Le fichier config.yml contient les paramètres qu'utilisera le plugin.
+Ceux-ci serviront pour l'ensemble de vos mondes s'ils ne sont pas surchargés
+dans les fichiers du dossier "Worlds_configs".
+
+Dans ce dossier, des sous-répertoires existent : "NORMAL" et "NETHER".
+Selon vos plugins, vous pourrez en avoir d'autres, tels que "SKYLAND".
+Ils permettent de regrouper les configurations des mondes par environement.
+
+Pour surcharger un paramètre pour un de vos mondes, il suffit de le copier
+dans le fichier portant son nom. Si vous copiez ce paramètre dans le fichier
+nommé "default_NORMAL_worlds" par exemple, ce paramètre sera employé dans tous
+les mondes de type "NORMAL", sauf si bien sûr vous l'avez précisé pour un monde
+en particulier.
+
+Vous pouvez donc faire hériter tous les réglages qui suivent à votre convenance.
+
+ATTENTION cependant à 2 points :
+- Il semble que les caractères spéciaux (accents, cédilles, ...) ne passent pas.
+- Pour surcharger un paramètre, il faut inclure sa structure. (voir l'exemple)
+
+Exemple :
+Pour surcharger le paramètre "player_death" de la section "points", vous
+devrez donc placer ceci :
+
+points:
+    player_death: -1
+
+Il s'agit de la notation YAML utilisée dans les fichiers de configuration (.yml)
+
+Creepersday est mon premier plugin pour bukkit, je l'ai fait pour comprendre
+comment ça marchait et afin de faire un peu de java puisque je n'ai pas
+l'habitude de ce langage. Donc si vous rencontrez des soucis, soyez indulgents.
+
+Vous trouverez ci-dessous l'explication des différents réglages.
+
+---
+
+* language
+
+Indique en quel langue seront affichés les messages à l'écran.
+Vous pourrez facilement en ajouter d'autres (et bien sûr avoir un réglage
+différent pour chacun de vos mondes).
+
+Regardez la section "messages" pour plus d'explications sur la manière de
+modifier ces messages, et ajouter d'autres langues.
+
+Par défaut, les valeurs possibles sont "EN" et "FR".
+
+* status
+
+Indique le status par défaut du jour des creepers.
+Les valeurs possibles sont :
+- active (lance un jour des creepers de suite)
+- random (le meilleur choix selon moi, lance aléatoirement le jour des creepers)
+- disable (le jour des creepers ne sera jamais déclenché)
+
+Il sera toujours possible de forcer le démarrage ou l'arrêt avec la commande
+"creepersday start/stop" (si vous avez les droits bien sûr).
+
+* creepersday_chance
+
+C'est le pourcentage de chance qu'un jour des creepers soit activé.
+Un test est effectué une fois par jour (le matin).
+Les valeurs possibles sont donc de 0 à 100.
+
+* display_stats
+
+Indique si, à la fin du jour des creepers, les statistiques seront affichées.
+Les statistiques montre le nombre de creepers tués et le nombre de morts.
+Valeurs possibles sont "true" (pour afficher) et "false" (pour ne pas afficher).
+
+* max_player_in_stats
+
+Nombre maximum de joueurs à afficher dans les stats.
+(ignoré si "display_stats" est à "false").
+
+* points
+
+Paramètres utilisés pour calculer le score à la fin du jour des creepers.
+(ignoré si "display_stats" est à "false").
+
+* points.kill_creeper
+
+Points gagnés (ou perdus si négatif) lorsqu'un joueur tue un creeper.
+
+* points.player_death
+
+Points gagnés (ou perdus si négatif) lorsqu'un joueur meurt.
+
+* warn_player
+
+Ces paramètres indiquent si le joueur doit être prévenu par un message.
+Les valeurs possibles sont "true" (prévenu) ou "false" (pas de message).
+
+* warn_player.on_start
+
+Au démarrage du jour des creepers.
+
+* warn_player.on_start_bonus
+
+Lorsqu'il reçoit le bonus au démarrage du jour des creepers.
+
+* warn_player.during
+
+Lorsqu'il rejoint le serveur pendant un jour des creepers.
+
+* warn_player.on_respawn_bonus
+
+Lorsqu'il reçoit le bonus en ressuscitant pendant un jour des creepers.
+
+* warn_player.on_join_bonus
+
+Lorsqu'il reçoit le bonus en rejoignant le serveur pendant un jour des creepers.
+
+* warn_player.on_stop
+
+A la fin du jour des creepers.
+
+* warn_player.on_stop_bonus
+
+Lorsqu'il reçoit le bonus à la fin du jour des creepers.
+
+* start_creepersday
+
+Cette section regroupe les réglages utilisés lorsqu'un jour des creepers démarre
+
+* start_creepersday.player_bonus
+
+Cette sous-section liste les items qui seront donnés aux joueurs présents sur le
+monde où le jour des creepers démarre (une seule fois : Quand il commence).
+
+Vous pouvez ajouter ou supprimer des lignes à votre guise. La notation YAML doit
+ici aussi être respectée, à savoir "NOM: NOMBRE".
+Pour connaitre les noms que vous pouvez utiliser, jetez un oeil à cette page :
+http://jd.bukkit.org/doxygen/d7/dd9/namespaceorg_1_1bukkit.html#ab7fa290bb19b9a830362aa88028ec80a
+
+Vous vous demandez pourquoi j'ai mis des oeufs par défaut ?
+Et bien... Lancez en pendant un jour des creepers, vous comprendrez :)
+
+* start_creepersday.mobs_transformation
+
+Cette sous-section liste, pour chaque mob, le pourcentage de chance pour qu'il
+se transforme en creeper (to_creeper), et s'il le devient, le pourcentage pour
+qu'il devienne un creeper électrique.
+
+Les loups apprivoisés ne seront pas affectés par les pourcentages de WOLF.
+
+* during_creepersday
+
+Cette section fonctionne de la même façon que "start_creepersday".
+Ce sont les réglages utilisés PENDANT le jour des creepers.
+Les pourcentages des mobs indiquent ici la chance pour que lorsqu'un nouveau mob
+naisse, il soit automatiquement remplacé par un creeper.
+
+Petite subtilité :
+
+* during_creepersday.player_bonus
+
+Ici il y a 2 parties : "on_join" et "on_respawn".
+Il s'agit de la liste des items donnés à un joueur qui rejoint le serveur
+pendant un jouer des creepers ("on_join") et qui ressuscite ("on_respawn").
+Voir l'explication de "start_creepersday.player_bonus" pour savoir comment
+gérer ces listes.
+
+* stop_creepersday
+
+Cette section regroupe les réglages lorsque le jour des creepers prend fin.
+
+* stop_creepersday.creepers_transformation
+
+Cet ensemble de réglages sert pour convertir les creepers présents dans le monde
+en d'autres mobs. "normal" indique la gestion des creepers classiques et
+"powered", des creepers électriques.
+
+Il s'agit de pourcentage, mais attention : L'ensemble pour "normal", et
+l'ensemble pour "powered" doit faire en tout 100 au maximum. La différence
+entre 100 et le total de vos réglages représentera le pourcentage de chance
+qu'un creeper meurt sans être transformé en un autre mob.
+C'est pour cette raison que j'ai mis une ligne "nothing" ("rien") en commentaire
+dans les réglages par défaut. Vous pouvez l'enlever si vous le souhaiter.
+
+* messages
+
+Cette partie des réglages fonctionne avec le réglage "language".
+Si vous n'utilisez qu'une langue, vous pourrez supprimer les lignes de l'autre
+(ou des autres si vous en avez ajouté).
+
+Vous pouvez modifier les messages comme vous le souhaitez, mais n'oubliez pas
+que les caractères spéciaux ne sont pas acceptés. C'est pour cela que je n'ai
+pas mis d'accents dans les phrases en français.
+
+Pour pouvoir utiliser une nouvelle langue, il vous suffit de rajouter des lignes
+sous les autres en respectant la notation ' CODE: "PHRASE" '.
+"Code" est libre, j'ai utilisé "EN" pour "English" et "FR" pour "Français" par
+convention, mais vous n'êtes pas obligé de suivre celle-ci.
+
+Par exemple, vous pouvez faire comme ceci :
+
+messages:
+    day_start:
+        EN: "Creepers' day!!! BEWARE: Run, hide... Or die!"
+        FR: "Jour des creepers !!! ATTENTION: Cours, caches toi... Ou meurs !"
+        LOL: "Shhhhhhhhhhhhhhh!"
+
+Pour utiliser "LOL" dans le réglage "language".
+
+* messages.day_start
+
+Message affiché aux joueurs lorsqu'un jour des creepers démarre.
+(si le paramètre "warn_player.on_start" est à "true").
+
+* messages.day_active
+
+Message affiché aux joueurs qui se connectent pendant un jour des creepers.
+(si le paramètre "warn_player.during" est à "true").
+
+* messages.day_stop
+
+Message affiché aux joueurs lorsqu'un jour des creepers prend fin.
+(si le paramètre "warn_player.on_stop" est à "true").
+
+* messages.stats_title
+
+Première ligne des statisques affichées à la fin du jour des creepers
+("<max_player_in_stats>" sera remplacé par la valeur de "max_player_in_stats").
+Utilisé uniquement si "display_stats" est à "true".
+
+* messages.stats_explanations
+
+Deuxième ligne des statisques affichées à la fin du jour des creepers.
+Utilisé uniquement si "display_stats" est à "true".
+
+* messages.bonus_start
+
+Message affiché aux joueurs lorsqu'ils reçoivent les items au démarrage
+du jour des creepers (ignoré si "start_creepersday.player_bonus" est vide,
+ou si warn_player.on_start_bonus est à "false").
+
+* messages.bonus_respawn
+
+Message affiché aux joueurs qui réssuscitent pendant un du jour des creepers,
+lorsqu'ils reçoivent les items.
+(ignoré si "during_creepersday.player_bonus.on_respawn" est vide,
+ou si warn_player.on_respawn_bonus est à "false").
+
+* messages.bonus_join
+
+Message affiché aux joueurs qui se connectent pendant un jour des creepers,
+lorsqu'ils reçoivent les items.
+(ignoré si "during_creepersday.player_bonus.on_join" est vide,
+ou si warn_player.on_join_bonus est à "false").
+
+* messages.bonus_stop
+
+Message affiché aux joueurs lorsqu'ils reçoivent les items à la fin
+du jour des creepers (ignoré si "stop_creepersday.player_bonus" est vide,
+ou si warn_player.on_stop_bonus est à "false").
+
+* advanced
+
+A priori, vous ne devriez pas toucher ces réglages, mais au cas où...
+
+* advanced.time_delay
+
+Intervalle de temps entre 2 vérifications du plugin sur l'état du
+jour des creepers. Nécessaire à cause des commandes modifiant l'heure, etc.
+Si votre serveur est lent, augmentez ce délai mais si vous mettez un chiffre
+trop important, il se peut que tout ne fonctionne pas bien.
+
+* advanced.start_before
+
+Heure de la journée maximale pour qu'un jour des creepers puisse démarrer
+aléatoirement. Un seul test réel est fait par jour, mais il y a une marge pour
+les mêmes raisons. Vous pouvez diminuer ce réglage, mais si vous mettez un
+chiffre trop petit, le jour des creepers peut ne jamais se produire.
+
+Pour rappel, une journée dans Minecraft commence à 0 et finit à 24000.
+
+* advanced.stop_after
+
+Heure de la journée à partir de laquelle le jour des creepers peut s'arrêter.

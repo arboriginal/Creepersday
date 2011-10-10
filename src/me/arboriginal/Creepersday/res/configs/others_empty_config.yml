@@ -1,0 +1,25 @@
+# ENGLISH:
+# You can override all values from config.yml here.
+# The final value will be got from <world-name>.yml,
+# or default.yml in the associated environment if any.
+# If none of those files override a value, config.yml will be used.
+#
+# As creepers only appear in "NORMAL" worlds, default status is disable.
+# It's up to you to change this setting.
+#
+# Write bellow all values specific to this world.
+# Use YAML notation, like in config.yml
+#
+# FRANCAIS : (ne pas mettre d'accents ou cedilles dans ce fichier)
+# Vous pouvez surcharger les valeurs du fichier config.yml ici.
+# La valeur finale sera recuperee depuis <nom-du-monde>.yml,
+# ou default.yml de l'environement associe sinon.
+# Si aucun de ces fichiers ne surcharge une valeur, config.yml sera utilise.
+#
+# Comme les creepers n'apparaissent que dans les mondes "NORMAL", le status
+# par defaut est desactive. Il n'appartient qu'a vous de changer ce reglage.
+#
+# Indiquez ci-dessous toutes les valeurs specifiques a ce monde.
+# Utilisez la notation YAML, comme dans config.yml
+
+status: disable

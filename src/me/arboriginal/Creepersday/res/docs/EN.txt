@@ -1,0 +1,267 @@
+The file config.yml contains the parameters that the plugin will use.
+These will serve for all of your worlds if they are not overriden in the files
+located into "Worlds_configs" directory.
+
+In this folder, sub-directories exist: "NORMAL" and "NETHER."
+Depending on your plugins, you can have others, such as "SKYLAND".
+They allow to group configurations for your worlds by environment.
+
+To override a setting for one of your worlds, simply copy it into the
+file bearing his name. If you copy this parameter in the file
+named "default_NORMAL_worlds" for example, this parameter will be used in all
+worlds of type "NORMAL", unless of course you have overriden for a world
+in particular.
+
+So you can inherit all the settings that follow at your convenience.
+
+But keep in mind 2 things:
+- It seems that special characters (accents, cedilla, ...) do not pass.
+- To override a parameter, including its structure. (see example)
+
+Example:
+To override the "player_death" parameter from section "points",
+you have to write this:
+
+points:
+    player_death: -1
+
+It's the YAML notation, used in configuration files (.yml)
+
+Creepersday is my first bukkit plugin, I did it to understand how it works and
+using a bit java language because I'm not familiar with it. So, if you encounter
+problems, please be forbearing.
+
+You will find below an explanation of the different settings.
+
+---
+
+* language
+
+Indicates in what language will be posted the messages on the screen.
+You can easily add more (and of course set different ones for each worlds).
+
+Look at the "messages" section for more explanation on how to change
+these messages, and add other languages.
+
+The default values ​​are "EN" and "FR".
+
+* status
+
+Indicates the default status for creepers' day.
+The possible values ​​are:
+- active (begin with a creepers' day)
+- random (IMHO, the best choice, starts creepers' days randomly)
+- disable (creepers' days will never be triggered)
+
+It will always be possible to force the startup or shutdown with the command
+"creepersday start / stop" (if you have permission of course).
+
+* creepersday_chance
+
+This is the percent chance that one creepers' day is activated.
+A test is performed once a day (morning).
+Possible values ​​are 0 to 100.
+
+* display_stats
+
+Indicate if, at the end of the creepers' day, stats will be displayed.
+Stats show the number of creepers killed and the number of deaths.
+Possible values are "true" or "false".
+
+* max_player_in_stats
+
+Maximum number of players to show in the stats.
+(ignored if "display_stats" is "false").
+
+* points
+
+Those settings are used to calculate the score at the end of a creepers' day
+(ignored if "display_stats" is "false").
+
+* points.kill_creeper
+
+Points earned (lost if negative) when a player kills a creeper.
+
+* points.player_death
+
+Points earned (lost if negative) when a player dies.
+
+* warn_player
+
+Those settings indicate if the player should receive a message.
+Possible values are "true" or "false".
+
+* warn_player.on_start
+
+When the creepers' day starts.
+
+* warn_player.on_start_bonus
+
+When he receive the bonus at the begin of a creepers' day.
+
+* warn_player.during
+
+When he join the server during a creepers' day.
+
+* warn_player.on_respawn_bonus
+
+When he receive the bonus for respawning during a creepers' day.
+
+* warn_player.on_join_bonus
+
+When he receive the bonus for joining the server during a creepers' day.
+
+* warn_player.on_stop
+
+When the creepers' day ends.
+
+* warn_player.on_stop_bonus
+
+When he receive the bonus at the end of a creepers' day.
+
+* start_creepersday
+
+This section contains the settings used when a creepers' day begins.
+
+* start_creepersday.player_bonus
+
+This subsection lists the items that will be given to players present on the
+world where the creepers' day begin (only once: When it starts).
+
+You can add or delete rows as you wish. YAML notation must also be employed here
+like "NAME: NUMBER". To know which names you can use, take a look at this page:
+http://jd.bukkit.org/doxygen/d7/dd9/namespaceorg_1_1bukkit.html#ab7fa290bb19b9a830362aa88028ec80a
+
+You ask why I put eggs by default?
+Then... Launch them during a creepers' day, you'll see :)
+
+* start_creepersday.mobs_transformation
+
+This subsection lists for each mob, the percent chance that it becomes a creeper
+(to_creeper), and in this case, the percentage it becomes powered.
+
+Tamed wolves will not be affected by the percentages of WOLF.
+
+* during_creepersday
+
+This section works like "start_creepersday". These are the settings used during
+the creepers' day. The mob's percentages indicate the chance it will
+automatically turn to creeper when it spawns.
+
+Subtlety:
+
+* during_creepersday.player_bonus
+
+Here there are 2 parts: "on_join" and "on_respawn".
+This is the list of items given to a player who joins the server during a
+creepers' day ("on_join") and respawn ("on_respawn"). See explanation
+of "start_creepersday.player_bonus" to learn how manage these lists.
+
+
+* stop_creepersday
+
+This section contains the settings when the creepers' day ends.
+
+* stop_creepersday.creepers_transformation
+
+This set of settings is used to convert creepers present in the world into
+other mobs. "normal" indicates the management of conventional creepers and
+"powered" is for powered creepers.
+
+This percentage, but beware: The set for "normal", and for "powered" should be
+a total of 100 maximum. The difference between 100 and your sum will represent
+the percentage chance a creeper dies without being transformed into another mob.
+This is why I put a comment line "nothing" into the default settings.
+You can remove it if you wish.
+
+* messages
+
+This part works with the settings "language". If you use only one language,
+you can delete others rows. You can change the messages as you like,
+but remember that special characters are not accepted
+(That's why I didn't put accents in French sentences).
+
+To use a new language, you simply have to add lines under the other,
+respecting the notation ' CODE: "SENTENCE" '.
+"Code" is what you want, I've used "EN" for "English" and "FR" for "French" by
+convention, but you are free to use you own.
+
+For example, you can do like this:
+
+messages:
+    day_start:
+        EN: "Creepers' day!!! BEWARE: Run, hide... Or die!"
+        FR: "Jour des creepers !!! ATTENTION: Cours, caches toi... Ou meurs !"
+        LOL: "Shhhhhhhhhhhhhhh!"
+
+Then you can use "LOL" into "language" setting.
+
+* messages.day_start
+
+Message displayed to players when the creepers' day starts.
+(if the "warn_player.on_start" parameter is "true").
+
+* messages.day_active
+
+Message displayed to incoming players during the creepers' day.
+(if the "warn_player.during" parameter is "true").
+
+* messages.day_stop
+
+Message displayed to players when the creepers' day ends.
+(if the "warn_player.on_stop" parameter is "true").
+
+* messages.stats_title
+
+First line of stats displayed at the end of creepers' day
+("<max_player_in_stats>" Will be replaced by the value of "max_player_in_stats").
+Only used when "display_stats" is "true".
+
+* messages.stats_explanations
+
+Second line of stats displayed at the end of creepers' day.
+Only used when "display_stats" is "true".
+
+* messages.bonus_start
+
+Message displayed to players when they receive items at the creepers' day start
+(ignored if "start_creepersday.player_bonus" is empty).
+
+* messages.bonus_respawn
+
+Message displayed to players who respawn during a creepers' day,
+when they receive items.
+(ignored if "during_creepersday.player_bonus.on_respawn" is empty).
+
+* messages.bonus_join
+
+Message displayed to incoming players during a creepers' day,
+when they receive items.
+(ignored if "during_creepersday.player_bonus.on_join" is empty).
+
+* messages.bonus_stop
+
+Message displayed to players when they receive items at the creepers' day end
+(ignored if "stop_creepersday.player_bonus" is empty).
+
+* advanced
+
+You should not have to modify those settings, just in case...
+
+* advanced.time_delay
+
+Time interval between two checks by the plugin about the creepers' day state.
+Necessary because of time commands, etc.. If your server is slow, increase this
+delay but if you put a too big number, it can break some things.
+
+* advanced.start_before
+
+Maximum day hour for a creepers' day can start randomly. Only one real test is
+done daily, but there is leeway for same reasons. You can reduce this setting,
+but if you put a too small number, the creepers' day may never occur.
+
+For memory, in Minecraft a day starts at 0 and ends at 24000.
+
+* advanced.stop_after
+
+Time of day at which the creepers' day can stop.

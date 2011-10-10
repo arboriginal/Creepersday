@@ -1,0 +1,25 @@
+name: Creepersday
+main: me.arboriginal.Creepersday.Creepersday
+version: 0.1
+
+commands:
+    creepersday:
+        description: Force starting/stopping a creepers' day
+        usage: /creepersday <start/stop> [world_name (required in console)]
+    
+    creepersday-reload-config:
+        description: Reload config files ("advanced" section values need a restart)
+        usage: /creepersday-reload-config
+
+permissions:
+    creepersday.*:
+        description: Gives access to all creepers'day commands
+        children:
+           creepersday.force: true
+           creepersday.reload: true
+    creepersday.force:
+        description: Force starting/stopping a creepers' day
+        default: op
+    creepersday.reload:
+        description: Update plugin config from files
+        default: op

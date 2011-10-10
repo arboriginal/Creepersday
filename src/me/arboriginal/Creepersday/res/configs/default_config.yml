@@ -1,0 +1,211 @@
+# See Docs/EN.txt for english explanations
+# Voir Docs/FR.txt pour des explications en francais
+
+language: EN
+status: random
+creepersday_chance: 30
+display_stats: true
+max_player_in_stats: 5
+
+points:
+    kill_creeper: 5
+    player_death: -2
+
+warn_player:
+    on_start: true
+    on_start_bonus: true
+    during: true
+    on_respawn_bonus: true
+    on_join_bonus: true
+    on_stop: true
+    on_stop_bonus: true
+
+start_creepersday:
+    player_bonus:
+        EGG: 64
+        IRON_SWORD: 1    
+    mobs_transformation:
+        CHICKEN:
+            to_creeper: 90
+            get_power: 80
+        COW:
+            to_creeper: 90
+            get_power: 50
+        CREEPER:
+            to_creeper: 0
+            get_power: 90
+        GHAST:
+            to_creeper: 0
+            get_power: 0
+        PIG:
+            to_creeper: 95
+            get_power: 30
+        PIG_ZOMBIE:
+            to_creeper: 0
+            get_power: 0
+        SHEEP:
+            to_creeper: 90
+            get_power: 70
+        SKELETON:
+            to_creeper: 60
+            get_power: 90
+        SLIME:
+            to_creeper: 0
+            get_power: 0
+        SPIDER:
+            to_creeper: 80
+            get_power: 50
+        SQUID:
+            to_creeper: 70
+            get_power: 90
+        ZOMBIE:
+            to_creeper: 90
+            get_power: 50
+        WOLF:
+            to_creeper: 70
+            get_power: 99
+        CAVE_SPIDER:
+            to_creeper: 10
+            get_power: 80
+        ENDERMAN:
+            to_creeper: 5
+            get_power: 100
+        SILVERFISH:
+            to_creeper: 0
+            get_power: 0
+
+during_creepersday:
+    player_bonus:
+        on_join:
+            EGG: 64
+            IRON_SWORD: 1
+        on_respawn:
+            EGG: 64
+            IRON_SWORD: 1
+    mobs_transformation:
+        CHICKEN:
+            to_creeper: 99
+            get_power: 80
+        COW:
+            to_creeper: 99
+            get_power: 50
+        CREEPER:
+            to_creeper: 0
+            get_power: 90
+        GHAST:
+            to_creeper: 0
+            get_power: 0
+        PIG:
+            to_creeper: 99
+            get_power: 30
+        PIG_ZOMBIE:
+            to_creeper: 0
+            get_power: 0
+        SHEEP:
+            to_creeper: 99
+            get_power: 70
+        SKELETON:
+            to_creeper: 80
+            get_power: 90
+        SLIME:
+            to_creeper: 0
+            get_power: 0
+        SPIDER:
+            to_creeper: 90
+            get_power: 50
+        SQUID:
+            to_creeper: 80
+            get_power: 90
+        ZOMBIE:
+            to_creeper: 95
+            get_power: 50
+        WOLF:
+            to_creeper: 80
+            get_power: 99
+        CAVE_SPIDER:
+            to_creeper: 50
+            get_power: 80
+        ENDERMAN:
+            to_creeper: 5
+            get_power: 100
+        SILVERFISH:
+            to_creeper: 0
+            get_power: 0
+
+stop_creepersday:
+    player_bonus:
+        COOKED_BEEF: 1
+    creepers_transformation:
+        normal:
+            # nothing: 2
+            CHICKEN: 10
+            COW: 20
+            CREEPER: 0
+            GHAST: 0
+            PIG: 20
+            PIG_ZOMBIE: 0
+            SHEEP: 20
+            SKELETON: 10
+            SLIME: 0
+            SPIDER: 8
+            SQUID: 0
+            ZOMBIE: 10
+            WOLF: 0
+            CAVE_SPIDER: 0
+            ENDERMAN: 0
+            SILVERFISH: 0
+        powered:
+            # nothing: 5
+            CHICKEN: 15
+            COW: 15
+            CREEPER: 2
+            GHAST: 0
+            PIG: 15
+            PIG_ZOMBIE: 0
+            SHEEP: 15
+            SKELETON: 9
+            SLIME: 0
+            SPIDER: 5
+            SQUID: 3
+            ZOMBIE: 10
+            WOLF: 2
+            CAVE_SPIDER: 3
+            ENDERMAN: 1
+            SILVERFISH: 0
+
+messages:
+    day_start:
+        EN: "Creepers' day!!! BEWARE: Run, hide... Or die!"
+        FR: "Jour des creepers !!! ATTENTION: Cours, caches toi... Ou meurs !"
+    day_active:
+        EN: "Creepers' day!!! BEWARE: Run, hide... Or die!"
+        FR: "Jour des creepers !!! ATTENTION: Cours, caches toi... Ou meurs !"
+    day_stop:
+        EN: "Creepers' day is over! Still alive? :)"
+        FR: "Le jour des creepers est fini ! Toujours vivant ? :)"
+    
+    # "<max_player_in_stats>" Will be replaced by the value of "max_player_in_stats"
+    stats_title:
+        EN: "=== Creepers' day stats (top <max_player_in_stats>): ==="
+        FR: "=== Statistiques du jours des creepers (top <max_player_in_stats>) : ==="
+    stats_explanations:
+        EN: "[rank]. [score] ([creepers killed] / [deaths]) [nickname]"
+        FR: "[rang]. [score] ([creepers tues] / [morts]) [pseudo]"
+    
+    bonus_start:
+        EN: "Hope this small gift help you survive to the Creepers' day!"
+        FR: "J'espere que ce petit cadeau t'aidera a survivre au jour des creepers !"
+    bonus_respawn:
+        EN: "You died looser! :p Take this, maybe you'll be better with it !"
+        FR: "Tu es mort looser ! :p Prends ceci, tu seras peut-etre meilleur avec !"
+    bonus_join:
+        EN: "You arrive during a creepers' day... Maybe this can help you :)"
+        FR: "Tu debarques en plein jour des creepers... Peut-etre que ceci t'aidera :)"
+    bonus_stop:
+        EN: "You have survived (or not) to the creepers' day. You win this gift :)"
+        FR: "Tu as survecu (ou pas) au jour des creepers. Tu gagnes ce cadeau :)"
+
+advanced:
+    time_delay: 1000
+    start_before: 5000
+    stop_after: 21000
