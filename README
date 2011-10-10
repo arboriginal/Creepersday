@@ -1,0 +1,8 @@
+Creepersday is a plugin for Bukkit (Minecraft server).
+All you need to run it is to copy the jar file into the "plugins" directory.
+
+Then, start your server. Docs and default config files will be created into
+plugins/Creepersday. Read the doc, modify your configuration and (if you are op)
+run the command /creepersday-reload-config or restart the server.
+
+Now, you can enjoy creepers' chase randomly :)
