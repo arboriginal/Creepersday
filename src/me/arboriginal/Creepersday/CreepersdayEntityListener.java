@@ -44,7 +44,7 @@ public class CreepersdayEntityListener extends EntityListener {
     Entity entity = event.getEntity();
     World world = entity.getWorld();
 
-    if (plugin.shouldDisplayStats(world)) {
+    if (plugin.isCreepersday(world) && plugin.shouldDisplayStats(world)) {
       if (entity instanceof Player) {
         String looser = ((Player) entity).getName();
 
