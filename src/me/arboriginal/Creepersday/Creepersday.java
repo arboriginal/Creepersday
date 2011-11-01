@@ -551,6 +551,11 @@ public class Creepersday extends JavaPlugin {
     for (int i = 0; i < entities.size(); i++) {
       Entity entity = entities.get(i);
       String className = getEntityType(entity);
+      
+      // For Spout / SpoutCraft
+      if (className.equals("SPOUTPLAYER")) {
+        className = "PLAYER";
+      }
 
       if (start) {
         if (className.equals("PLAYER")) {
