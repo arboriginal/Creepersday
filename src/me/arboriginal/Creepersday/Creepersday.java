@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -551,7 +552,7 @@ public class Creepersday extends JavaPlugin {
     for (int i = 0; i < entities.size(); i++) {
       Entity entity = entities.get(i);
       String className = getEntityType(entity);
-      
+
       // For Spout / SpoutCraft
       if (className.equals("SPOUTPLAYER")) {
         className = "PLAYER";
@@ -620,38 +621,73 @@ public class Creepersday extends JavaPlugin {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private String[] buildStats(World world) {
     String key = world.getEnvironment() + "." + world.getName() + ".stats";
-    ArrayList<String> messages = new ArrayList<String>();
-    @SuppressWarnings("unchecked")
+    ArrayList<LinkedHashMap<String, Object>> scores = new ArrayList<LinkedHashMap<String, Object>>();
     LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(key);
+    LinkedHashMap<String, Object> playerDatas;
 
     for (Iterator<?> i = stats.keySet().iterator(); i.hasNext();) {
+      playerDatas = new LinkedHashMap<String, Object>();
       String playerName = (String) i.next();
       LinkedHashMap<String, Integer> playerStats = stats.get(playerName);
       int kills = playerStats.containsKey("kills") ? playerStats.get("kills") : 0;
       int deaths = playerStats.containsKey("deaths") ? playerStats.get("deaths") : 0;
-      int score = calculateScore(world, kills, deaths);
 
-      messages.add(ChatColor.GOLD + "" + score + ChatColor.WHITE + " (" + ChatColor.GREEN + ""
-          + kills + ChatColor.WHITE + "/" + ChatColor.RED + deaths + ChatColor.WHITE + ") "
-          + ChatColor.YELLOW + "" + playerName);
+      playerDatas.put("name", playerName);
+      playerDatas.put("kills", kills);
+      playerDatas.put("deaths", deaths);
+      playerDatas.put("score", calculateScore(world, kills, deaths));
+
+      scores.add(playerDatas);
     }
 
-    Collections.sort(messages, Collections.reverseOrder());
+    Collections.sort(scores, new Comparator<LinkedHashMap<String, Object>>() {
+      @Override
+      public int compare(LinkedHashMap<String, Object> o1, LinkedHashMap<String, Object> o2) {
+        return (Integer) o2.get("score") - (Integer) o1.get("score");
+      }
+    });
 
     int maxPlayer = getIntProperty(world, "max_player_in_stats");
-    String[] top = new String[Math.min(maxPlayer, messages.size()) + 2];
+    String[] top = new String[Math.min(maxPlayer, scores.size()) + 2];
 
     top[0] = ChatColor.LIGHT_PURPLE
         + getMessage(world, "stats_title").replace("<max_player_in_stats>", "" + maxPlayer);
     top[1] = ChatColor.GRAY + getMessage(world, "stats_explanations");
 
     for (int i = 2; i < top.length; i++) {
-      top[i] = ChatColor.YELLOW + "" + (i - 1) + ". " + messages.get(i - 2);
+      playerDatas = (LinkedHashMap<String, Object>) scores.get(i - 2);
+
+      top[i] = ChatColor.YELLOW + "" + (i - 1) + ". " + ChatColor.GOLD + ""
+          + playerDatas.get("score") + ChatColor.WHITE + " (" + ChatColor.GREEN + ""
+          + playerDatas.get("kills") + ChatColor.WHITE + "/" + ChatColor.RED
+          + playerDatas.get("deaths") + ChatColor.WHITE + ") " + ChatColor.YELLOW + ""
+          + playerDatas.get("name");
+
+      gratifyPlayer(world, i - 1, (String) playerDatas.get("name"));
     }
 
     return top;
+  }
+
+  private void gratifyPlayer(World world, int rank, String playerName) {
+    String command = getStringProperty(world, "greetings.rank" + rank + ".command");
+    String message = getStringProperty(world, "greetings.rank" + rank + ".message");
+
+    if (command != null && !command.equals("")) {
+      getServer().dispatchCommand(getServer().getConsoleSender(),
+          command.replace("<player>", (String) playerName));
+    }
+
+    if (message != null && !message.equals("")) {
+      Player player = getServer().getPlayer(playerName);
+
+      if (player != null) {
+        player.sendMessage(message.replace("<player>", (String) playerName));
+      }
+    }
   }
 
   private int calculateScore(World world, int kills, int deaths) {

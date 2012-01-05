@@ -179,6 +179,36 @@ qu'un creeper meurt sans être transformé en un autre mob.
 C'est pour cette raison que j'ai mis une ligne "nothing" ("rien") en commentaire
 dans les réglages par défaut. Vous pouvez l'enlever si vous le souhaiter.
 
+
+* greetings
+
+Cette partie est optionnelle : Si vous souhaitez récompenser les joueurs,
+en fonction de leur rang, utilisez la comme suit :
+
+* greetings.rank<Numéro du rang>.command
+
+Contient la commande à exécuter pour récompenser le joueur ayant obtenu le rang
+"<Numéro du rang>". Attention : Ne mettez pas le "/" de départ.
+
+* greetings.rank<Numéro du rang>.message
+
+Contient le message à afficher au joueur ayant obtenu le rang "<Numéro du rang>"
+
+Quelques exemples :
+-------------------
+
+greetings:
+    rank1:
+      command: "give <player> DIAMOND 1"
+      message: "Bravo <player>, tu gagnes un diamant !"
+    rank2:
+      command: "money give <player> 100"
+      message: "Bravo <player>, tu gagnes 100 euros !"
+    rank5:
+      command: "kick <player>"
+      message: "<player>, tu es mauvais... Tant pis pour toi !"
+
+
 * messages
 
 Cette partie des réglages fonctionne avec le réglage "language".

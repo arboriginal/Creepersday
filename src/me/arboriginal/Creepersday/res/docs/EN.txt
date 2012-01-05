@@ -174,6 +174,35 @@ the percentage chance a creeper dies without being transformed into another mob.
 This is why I put a comment line "nothing" into the default settings.
 You can remove it if you wish.
 
+
+* greetings
+
+This part is optional: If you want to reward your players, according to their
+rank, use this like that:
+
+* greetings.rank<Number of the rank>.command
+
+Contains the command to be executed to reward the player which got the rank
+"<Number of the rank>". Beware: Do not put the "/" which begins command.
+
+* greetings.rank<Number of the rank>.message
+
+Contains the message to display to the player which got the rank <Number of the rank>
+
+Some examples:
+--------------
+
+greetings:
+    rank1:
+      command: "give <player> DIAMOND 1"
+      message: "Congratulations <player>, you win a diamond!"
+    rank2:
+      command: "money give <player> 100"
+      message: "Congratulations <player>, you win 100 dollars!"
+    rank5:
+      command: "kick <player>"
+      message: "<player>, You're a looser... Get out!"
+
 * messages
 
 This part works with the settings "language". If you use only one language,

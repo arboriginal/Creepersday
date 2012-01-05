@@ -173,6 +173,17 @@ stop_creepersday:
             ENDERMAN: 1
             SILVERFISH: 0
 
+greetings:
+    rank1:
+      command: ""
+      message: ""
+    rank2:
+      command: ""
+      message: ""
+    rank3:
+      command: ""
+      message: ""
+      
 messages:
     day_start:
         EN: "Creepers' day!!! BEWARE: Run, hide... Or die!"
