@@ -143,6 +143,9 @@ Cette sous-section liste, pour chaque mob, le pourcentage de chance pour qu'il
 se transforme en creeper (to_creeper), et s'il le devient, le pourcentage pour
 qu'il devienne un creeper électrique.
 
+Voir cette page pour la liste des noms utilisables :
+http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
+
 Les loups apprivoisés ne seront pas affectés par les pourcentages de WOLF.
 
 * during_creepersday
@@ -178,6 +181,9 @@ entre 100 et le total de vos réglages représentera le pourcentage de chance
 qu'un creeper meurt sans être transformé en un autre mob.
 C'est pour cette raison que j'ai mis une ligne "nothing" ("rien") en commentaire
 dans les réglages par défaut. Vous pouvez l'enlever si vous le souhaiter.
+
+Voir cette page pour la liste des noms utilisables :
+http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
 
 
 * greetings

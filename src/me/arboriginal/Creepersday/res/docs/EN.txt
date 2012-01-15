@@ -140,6 +140,9 @@ Then... Launch them during a creepers' day, you'll see :)
 This subsection lists for each mob, the percent chance that it becomes a creeper
 (to_creeper), and in this case, the percentage it becomes powered.
 
+See this page to know whiwh names you can use:
+http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
+
 Tamed wolves will not be affected by the percentages of WOLF.
 
 * during_creepersday
@@ -173,6 +176,9 @@ a total of 100 maximum. The difference between 100 and your sum will represent
 the percentage chance a creeper dies without being transformed into another mob.
 This is why I put a comment line "nothing" into the default settings.
 You can remove it if you wish.
+
+See this page to know whiwh names you can use:
+http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
 
 
 * greetings

@@ -567,14 +567,18 @@ public class Creepersday extends JavaPlugin {
           }
         }
         else {
-          CreatureType type = CreatureType.valueOf(className);
+          try {
+            CreatureType type = CreatureType.valueOf(className);
 
-          if (shouldConvertEntity(entity, type, true)) {
-            entity = convertEntity(entity, CreatureType.CREEPER);
+            if (shouldConvertEntity(entity, type, true)) {
+              entity = convertEntity(entity, CreatureType.CREEPER);
 
-            if (shouldPowerCreeper(entity.getWorld(), type, true)) {
-              givePower(entity);
+              if (shouldPowerCreeper(entity.getWorld(), type, true)) {
+                givePower(entity);
+              }
             }
+          }
+          catch (IllegalArgumentException e) {
           }
         }
       }
@@ -616,7 +620,11 @@ public class Creepersday extends JavaPlugin {
       int number = mobs.get(name);
 
       for (int j = 0; j < number; j++) {
-        matrix.add(CreatureType.valueOf(name));
+        try {
+          matrix.add(CreatureType.valueOf(name));
+        }
+        catch (IllegalArgumentException e) {
+        }
       }
     }
   }
@@ -718,6 +726,15 @@ public class Creepersday extends JavaPlugin {
     }
     else if (type.equals("PIGZOMBIE")) {
       type = "PIG_ZOMBIE";
+    }
+    else if (type.equals("ENDERDRAGON")) {
+      type = "ENDER_DRAGON";
+    }
+    else if (type.equals("MUSHROOMCOW")) {
+      type = "MUSHROOM_COW";
+    }
+    else if (type.equals("MAGMACUBE")) {
+      type = "MAGMA_CUBE";
     }
 
     return type;
