@@ -11,29 +11,36 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 public class CreepersdayEntityListener implements Listener {
-	private final Creepersday plugin;
+	private final Creepersday	plugin;
 
 	public CreepersdayEntityListener(final Creepersday plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
+
 		CreatureType type = event.getCreatureType();
 
 		if (type != CreatureType.CREEPER) {
 			Entity entity = event.getEntity();
-			World world = entity.getWorld();
 
-			if (plugin.isCreepersday(world)
-					&& plugin.shouldConvertEntity(entity, type, false)) {
-				entity = plugin.convertEntity(entity, CreatureType.CREEPER);
+			if (entity != null) {
+				World world = entity.getWorld();
 
-				if (plugin.shouldPowerCreeper(world, type, false)) {
-					plugin.givePower(entity);
+				if (plugin.isCreepersday(world) && plugin.shouldConvertEntity(entity, type, false)) {
+					entity = plugin.convertEntity(entity, CreatureType.CREEPER);
+
+					if (plugin.shouldPowerCreeper(world, type, false)) {
+						plugin.givePower(entity);
+					}
 				}
 			}
 		}
@@ -42,20 +49,25 @@ public class CreepersdayEntityListener implements Listener {
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
 		Entity entity = event.getEntity();
-		World world = entity.getWorld();
 
-		if (plugin.isCreepersday(world) && plugin.shouldDisplayStats(world)) {
-			if (entity instanceof Player) {
-				String looser = ((Player) entity).getName();
+		if (entity != null) {
+			World world = entity.getWorld();
 
-				if (looser != null) {// Looser IS null! :D
-					plugin.logStat(world, looser, "deaths");
+			if (plugin.isCreepersday(world) && plugin.shouldDisplayStats(world)) {
+				if (entity instanceof Player) {
+					Player looser = (Player) entity;
+					String looserName = looser.getName();
+
+					if (looserName != null && looser.getLastDamageCause().getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+						plugin.logStat(world, looserName, "deaths");
+					}
 				}
-			} else if (entity instanceof Creeper) {
-				String killer = getKillerName(entity);
+				else if (entity instanceof Creeper) {
+					String killer = getKillerName(entity);
 
-				if (killer != null) {
-					plugin.logStat(world, killer, "kills");
+					if (killer != null) {
+						plugin.logStat(world, killer, "kills");
+					}
 				}
 			}
 		}

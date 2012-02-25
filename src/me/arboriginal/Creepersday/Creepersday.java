@@ -12,10 +12,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -25,7 +25,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.Inventory;
@@ -38,13 +37,9 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Representer;
 
 public class Creepersday extends JavaPlugin {
-	protected Map<String, Object> pluginConfig = new HashMap<String, Object>();
+	protected Map<String, Object>	pluginConfig	= new HashMap<String, Object>();
 
 	// Bukkit hooks
-
-	@Override
-	public void onDisable() {
-	}
 
 	@Override
 	public void onEnable() {
@@ -56,8 +51,7 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equals("creepersday")) {
 			return runCommandForceState(sender, args);
 		}
@@ -72,14 +66,16 @@ public class Creepersday extends JavaPlugin {
 	// Public methods
 
 	public void startCreepersday(World world) {
-		String key = world.getEnvironment() + "." + world.getName()
-				+ ".last_check_day";
+		if (world == null) {
+			return;
+		}
+
+		String key = world.getEnvironment() + "." + world.getName() + ".last_check_day";
 		convertEntities(world, true);
 
 		setCurrentStatus(world, "active");
 		setProperty(key, getCurrentDay(world));
-		System.out.println("** " + world.getName()
-				+ ": Creepersday is starting.");
+		System.out.println("** " + world.getName() + ": Creepersday is starting.");
 
 		if (shouldDisplayStats(world)) {
 			resetStats(world);
@@ -87,8 +83,11 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	public void stopCreepersday(World world) {
-		String key = world.getEnvironment() + "." + world.getName()
-				+ ".last_check_day";
+		if (world == null) {
+			return;
+		}
+
+		String key = world.getEnvironment() + "." + world.getName() + ".last_check_day";
 
 		resetCurrentStatus(world);
 		setProperty(key, getCurrentDay(world));
@@ -106,47 +105,45 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	public boolean shouldCreepersdayStart(World world) {
-		String key = world.getEnvironment() + "." + world.getName()
-				+ ".last_check_day";
-		int currentDay = getCurrentDay(world);
+		if (world != null) {
+			String key = world.getEnvironment() + "." + world.getName() + ".last_check_day";
+			int currentDay = getCurrentDay(world);
 
-		if (currentDay > (Integer) getProperty(key)) {
-			setProperty(key, currentDay);
+			if (currentDay > (Integer) getProperty(key)) {
+				setProperty(key, currentDay);
 
-			return getStringProperty(world, "status").equals("random")
-					&& world.getTime() <= getIntProperty(world,
-							"advanced.start_before")
-					&& testPercentChance(world, "creepersday_chance");
+				return getStringProperty(world, "status").equals("random")
+				    && world.getTime() <= getIntProperty(world, "advanced.start_before")
+				    && testPercentChance(world, "creepersday_chance");
+			}
 		}
 
 		return false;
 	}
 
 	public boolean shouldCreepersdayStop(World world) {
-		String key = world.getEnvironment() + "." + world.getName()
-				+ ".last_check_day";
+		if (world == null) {
+			return true;
+		}
+
+		String key = world.getEnvironment() + "." + world.getName() + ".last_check_day";
 
 		return (getCurrentDay(world) > (Integer) getProperty(key))
-				|| (world.getTime() >= getIntProperty(world,
-						"advanced.stop_after"));
+		    || (world.getTime() >= getIntProperty(world, "advanced.stop_after"));
 	}
 
-	public boolean shouldConvertEntity(Entity entity, CreatureType type,
-			boolean start) {
+	public boolean shouldConvertEntity(Entity entity, CreatureType type, boolean start) {
 		if (type == CreatureType.WOLF && ((Wolf) entity).isTamed()) {
 			return false;
 		}
 
-		String key = (start ? "start" : "during")
-				+ "_creepersday.mobs_transformation.";
+		String key = (start ? "start" : "during") + "_creepersday.mobs_transformation.";
 
 		return testPercentChance(entity.getWorld(), key + type + ".to_creeper");
 	}
 
-	public boolean shouldPowerCreeper(World world, CreatureType type,
-			boolean start) {
-		String key = (start ? "start" : "during")
-				+ "_creepersday.mobs_transformation.";
+	public boolean shouldPowerCreeper(World world, CreatureType type, boolean start) {
+		String key = (start ? "start" : "during") + "_creepersday.mobs_transformation.";
 
 		return testPercentChance(world, key + type + ".get_power");
 	}
@@ -159,9 +156,8 @@ public class Creepersday extends JavaPlugin {
 		String key = world.getEnvironment() + "." + world.getName() + ".stats";
 		@SuppressWarnings("unchecked")
 		LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(key);
-		LinkedHashMap<String, Integer> playerStats = stats
-				.containsKey(playerName) ? stats.get(playerName)
-				: new LinkedHashMap<String, Integer>();
+		LinkedHashMap<String, Integer> playerStats = stats.containsKey(playerName) ? stats.get(playerName)
+		    : new LinkedHashMap<String, Integer>();
 
 		int stat = playerStats.containsKey(event) ? playerStats.get(event) : 0;
 		playerStats.put(event, ++stat);
@@ -171,19 +167,18 @@ public class Creepersday extends JavaPlugin {
 
 	public void resetStats(World world) {
 		setProperty(world.getEnvironment() + "." + world.getName() + ".stats",
-				new LinkedHashMap<String, LinkedHashMap<String, Integer>>());
+		    new LinkedHashMap<String, LinkedHashMap<String, Integer>>());
 	}
 
 	public void displayStats(World world) {
-		List<LivingEntity> entities = world.getLivingEntities();
 		String[] stats = buildStats(world);
 
-		for (int i = 0; i < entities.size(); i++) {
-			Entity entity = entities.get(i);
-
-			if (entity instanceof Player) {
-				for (int j = 0; j < stats.length; j++) {
-					((Player) entity).sendMessage(stats[j]);
+		if (stats != null && stats.length > 0) {
+			for (Entity entity : world.getLivingEntities()) {
+				if (entity instanceof Player) {
+					for (String stat : stats) {
+						((Player) entity).sendMessage(stat);
+					}
 				}
 			}
 		}
@@ -210,44 +205,41 @@ public class Creepersday extends JavaPlugin {
 		((Creeper) entity).setPowered(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void giveBonusToPlayer(Player player, String event) {
-		LinkedHashMap<String, Integer> bonus;
-		World world = player.getWorld();
-
-		if (event.equals("start")) {
-			bonus = getPlayerBonusOnStartCreepersday(world);
-		} else if (event.equals("respawn")) {
-			bonus = getPlayerBonusOnRespawnDuringCreepersday(world);
-		} else if (event.equals("join")) {
-			bonus = getPlayerBonusOnJoinDuringCreepersday(world);
-		} else if (event.equals("stop")) {
-			bonus = getPlayerBonusOnStopCreepersday(world);
-		} else {
+		if (player == null) {
 			return;
 		}
 
-		if (!bonus.isEmpty()) {
+		World world = player.getWorld();
+		LinkedHashMap<String, Integer> bonus = getPlayerBonus(world, event);
+
+		if (bonus != null && !bonus.isEmpty()) {
 			giveStuffToPlayer(player, bonus);
 
 			if (shouldWarnPlayer(world, "on_" + event + "_bonus")) {
-				player.sendMessage(ChatColor.LIGHT_PURPLE
-						+ getMessage(world, "bonus_" + event));
+				player.sendMessage(ChatColor.LIGHT_PURPLE + getMessage(world, "bonus_" + event));
 			}
 		}
 	}
 
 	public String getInitialStatus(World world) {
+		if (world == null) {
+			return "random";
+		}
+
 		return getStringProperty(world, "status");
 	}
 
 	public String getCurrentStatus(World world) {
+		if (world == null) {
+			return getInitialStatus(world);
+		}
+
 		return getStringProperty(world, "current_status");
 	}
 
 	public void setCurrentStatus(World world, String status) {
-		setProperty(world.getEnvironment() + "." + world.getName()
-				+ ".current_status", status);
+		setProperty(world.getEnvironment() + "." + world.getName() + ".current_status", status);
 	}
 
 	public void resetCurrentStatus(World world) {
@@ -259,6 +251,28 @@ public class Creepersday extends JavaPlugin {
 		return getMapProperty(world, "start_creepersday.player_bonus");
 	}
 
+	@SuppressWarnings("unchecked")
+	public LinkedHashMap<String, Integer> getPlayerBonus(World world, String event) {
+		LinkedHashMap<String, Integer> bonus = null;
+
+		if (world == null) {
+		}
+		else if (event.equals("start")) {
+			bonus = getPlayerBonusOnStartCreepersday(world);
+		}
+		else if (event.equals("respawn")) {
+			bonus = getPlayerBonusOnRespawnDuringCreepersday(world);
+		}
+		else if (event.equals("join")) {
+			bonus = getPlayerBonusOnJoinDuringCreepersday(world);
+		}
+		else if (event.equals("stop")) {
+			bonus = getPlayerBonusOnStopCreepersday(world);
+		}
+
+		return bonus;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public LinkedHashMap getPlayerBonusOnJoinDuringCreepersday(World world) {
 		return getMapProperty(world, "during_creepersday.player_bonus.on_join");
@@ -266,8 +280,7 @@ public class Creepersday extends JavaPlugin {
 
 	@SuppressWarnings("rawtypes")
 	public LinkedHashMap getPlayerBonusOnRespawnDuringCreepersday(World world) {
-		return getMapProperty(world,
-				"during_creepersday.player_bonus.on_respawn");
+		return getMapProperty(world, "during_creepersday.player_bonus.on_respawn");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -276,12 +289,15 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	public String getLanguage(World world) {
+		if (world == null) {
+			return "EN";
+		}
+
 		return getStringProperty(world, "language");
 	}
 
 	public String getMessage(World world, String key) {
-		String message = getStringProperty(world, "messages." + key + "."
-				+ getLanguage(world));
+		String message = getStringProperty(world, "messages." + key + "." + getLanguage(world));
 
 		if (message != null) {
 			return message;
@@ -295,46 +311,29 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public LinkedHashMap getMobsTransformMatrix(World world, String mobType,
-			boolean start) {
-		String key = start ? "start_creepersday" : "during_creepersday";
-
-		return getMapProperty(world, key + ".mobs_transformation." + mobType);
-	}
-
-	@SuppressWarnings("rawtypes")
 	public LinkedHashMap getCreeperTransformMatrix(World world, boolean powered) {
 		String is_powered = powered ? "powered" : "normal";
 
-		return getMapProperty(world,
-				"stop_creepersday.creepers_transformation." + is_powered);
+		return getMapProperty(world, "stop_creepersday.creepers_transformation." + is_powered);
 	}
 
 	// Private methods
 
 	private void initConfig() {
 		String configDir = getDataFolder().getPath();
-		getConfig(configDir + "/config.yml", "res/configs/default_config.yml",
-				"default");
-
+		getConfig(configDir + "/config.yml", "res/configs/default_config.yml", "default");
 		configDir += "/Worlds_configs/";
-		List<World> worlds = getServer().getWorlds();
 
-		for (int i = 0; i < worlds.size(); i++) {
-			World world = worlds.get(i);
+		for (World world : getServer().getWorlds()) {
 			String name = world.getName();
 			Environment env = world.getEnvironment();
 
 			String directory = configDir + env + "/";
-			String emptyFile = "res/configs/"
-					+ ((env == Environment.NORMAL) ? "normal" : "others")
-					+ "_empty_config.yml";
+			String emptyFile = "res/configs/" + ((env == Environment.NORMAL) ? "normal" : "others") + "_empty_config.yml";
 
-			getConfig(directory + "default_" + env + "_worlds.yml", emptyFile,
-					env + ".default");
+			getConfig(directory + "default_" + env + "_worlds.yml", emptyFile, env + ".default");
 			getConfig(directory + name + ".yml", emptyFile, env + "." + name);
-			setProperty(env + "." + name + ".last_check_day",
-					getCurrentDay(world));
+			setProperty(env + "." + name + ".last_check_day", getCurrentDay(world));
 
 			resetCurrentStatus(world);
 
@@ -345,6 +344,10 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private int getCurrentDay(World world) {
+		if (world == null) {
+			return 0;
+		}
+
 		return (int) Math.floor(world.getFullTime() / 24000);
 	}
 
@@ -356,14 +359,9 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private void registerRepeatingTask() {
-		List<World> worlds = getServer().getWorlds();
-
-		for (int i = 0; i < worlds.size(); i++) {
-			World world = worlds.get(i);
-
-			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
-					new CreepersdayRunnable(world), 0,
-					getIntProperty(world, "advanced.time_delay"));
+		for (World world : getServer().getWorlds()) {
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new CreepersdayRunnable(world), 0,
+			    getIntProperty(world, "advanced.time_delay"));
 		}
 	}
 
@@ -383,17 +381,19 @@ public class Creepersday extends JavaPlugin {
 
 		try {
 			in = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-		} finally {
+		}
+		catch (FileNotFoundException e) {
+		}
+		finally {
 			try {
 				if (in != null) {
 					@SuppressWarnings("unchecked")
-					Map<String, Object> conf = (Map<String, Object>) yaml
-							.load(new UnicodeReader(in));
+					Map<String, Object> conf = (Map<String, Object>) yaml.load(new UnicodeReader(in));
 					setProperty(key, conf);
 					in.close();
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 			}
 		}
 	}
@@ -415,18 +415,26 @@ public class Creepersday extends JavaPlugin {
 			while ((b = is.read()) != -1) {
 				os.write(b);
 			}
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} finally {
+		}
+		catch (FileNotFoundException e) {
+		}
+		catch (IOException e) {
+		}
+		finally {
 			try {
 				os.close();
 				is.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 			}
 		}
 	}
 
 	private String getStringProperty(World world, String property) {
+		if (world == null) {
+			return "";
+		}
+
 		String name = world.getName();
 		String env = world.getEnvironment().toString();
 
@@ -448,6 +456,10 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private boolean getBooleanProperty(World world, String property) {
+		if (world == null) {
+			return false;
+		}
+
 		String name = world.getName();
 		String env = world.getEnvironment().toString();
 
@@ -473,25 +485,27 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private Integer getIntProperty(World world, String property) {
-		String name = world.getName();
-		String env = world.getEnvironment().toString();
+		if (world != null) {
+			String name = world.getName();
+			String env = world.getEnvironment().toString();
 
-		Object value = getProperty(env + "." + name + "." + property);
+			Object value = getProperty(env + "." + name + "." + property);
 
-		if (value != null) {
-			return (Integer) value;
-		}
+			if (value != null) {
+				return (Integer) value;
+			}
 
-		value = getProperty(env + ".default." + property);
+			value = getProperty(env + ".default." + property);
 
-		if (value != null) {
-			return (Integer) value;
-		}
+			if (value != null) {
+				return (Integer) value;
+			}
 
-		value = getProperty("default." + property);
+			value = getProperty("default." + property);
 
-		if (value != null) {
-			return (Integer) value;
+			if (value != null) {
+				return (Integer) value;
+			}
 		}
 
 		return 0;
@@ -499,32 +513,33 @@ public class Creepersday extends JavaPlugin {
 
 	@SuppressWarnings("rawtypes")
 	private LinkedHashMap getMapProperty(World world, String property) {
-		String name = world.getName();
-		String env = world.getEnvironment().toString();
+		if (world != null) {
+			String name = world.getName();
+			String env = world.getEnvironment().toString();
 
-		Object value = getProperty(env + "." + name + "." + property);
+			Object value = getProperty(env + "." + name + "." + property);
 
-		if (value != null) {
-			return (LinkedHashMap) value;
-		}
+			if (value != null) {
+				return (LinkedHashMap) value;
+			}
 
-		value = getProperty(env + ".default." + property);
+			value = getProperty(env + ".default." + property);
 
-		if (value != null) {
-			return (LinkedHashMap) value;
-		}
+			if (value != null) {
+				return (LinkedHashMap) value;
+			}
 
-		value = getProperty("default." + property);
+			value = getProperty("default." + property);
 
-		if (value != null) {
-			return (LinkedHashMap) value;
+			if (value != null) {
+				return (LinkedHashMap) value;
+			}
 		}
 
 		return new LinkedHashMap();
 	}
 
-	private void giveStuffToPlayer(Player player,
-			LinkedHashMap<String, Integer> stuff) {
+	private void giveStuffToPlayer(Player player, LinkedHashMap<String, Integer> stuff) {
 		boolean behind = false;
 		World world = player.getWorld();
 		Location loc = player.getLocation();
@@ -532,13 +547,13 @@ public class Creepersday extends JavaPlugin {
 
 		for (Iterator<?> i = stuff.keySet().iterator(); i.hasNext();) {
 			String name = (String) i.next();
-			ItemStack item = new ItemStack(Material.getMaterial(name),
-					stuff.get(name));
+			ItemStack item = new ItemStack(Material.getMaterial(name), stuff.get(name));
 
 			if (inv.firstEmpty() == -1) {
 				world.dropItem(loc, item);
 				behind = true;
-			} else {
+			}
+			else {
 				inv.addItem(item);
 			}
 		}
@@ -549,80 +564,70 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private void convertEntities(World world, boolean start) {
-		List<LivingEntity> entities = world.getLivingEntities();
-		ArrayList<CreatureType> randomMobsForNormalCreeper = new ArrayList<CreatureType>();
-		ArrayList<CreatureType> randomMobsForPoweredCreeper = new ArrayList<CreatureType>();
+		ArrayList<CreatureType> normal = new ArrayList<CreatureType>();
+		ArrayList<CreatureType> powered = new ArrayList<CreatureType>();
 
 		if (!start) {
-			populateRandomsMobs(randomMobsForNormalCreeper, world, false);
-			populateRandomsMobs(randomMobsForPoweredCreeper, world, true);
+			populateRandomsMobs(normal, world, false);
+			populateRandomsMobs(powered, world, true);
 		}
 
-		for (int i = 0; i < entities.size(); i++) {
-			Entity entity = entities.get(i);
-			String className = getEntityType(entity);
+		for (Chunk chunk : world.getLoadedChunks()) {
+			for (Entity entity : chunk.getEntities()) {
+				String className = getEntityType(entity);
 
-			// For Spout / SpoutCraft
-			if (className.equals("SPOUTPLAYER")) {
-				className = "PLAYER";
-			}
+				// For Spout / SpoutCraft, we need to check also "SpoutPlayer"
+				if (className.equals("PLAYER") || className.equals("SPOUTPLAYER")) {
+					String event = start ? "start" : "stop";
 
-			if (start) {
-				if (className.equals("PLAYER")) {
-					giveBonusToPlayer((Player) entity, "start");
+					giveBonusToPlayer((Player) entity, event);
 
-					if (shouldWarnPlayer(world, "on_start")) {
-						((Player) entity).sendMessage(ChatColor.DARK_GREEN
-								+ getMessage(world, "day_start"));
-					}
-				} else {
-					try {
-						CreatureType type = CreatureType.valueOf(className);
-
-						if (shouldConvertEntity(entity, type, true)) {
-							entity = convertEntity(entity, CreatureType.CREEPER);
-
-							if (shouldPowerCreeper(entity.getWorld(), type,
-									true)) {
-								givePower(entity);
-							}
-						}
-					} catch (IllegalArgumentException e) {
+					if (shouldWarnPlayer(world, "on_" + event)) {
+						((Player) entity).sendMessage(ChatColor.DARK_GREEN + getMessage(world, "day_" + event));
 					}
 				}
-			} else {
-				if (className.equals("PLAYER")) {
-					giveBonusToPlayer((Player) entity, "stop");
-
-					if (shouldWarnPlayer(world, "on_stop")) {
-						((Player) entity).sendMessage(ChatColor.DARK_GREEN
-								+ getMessage(world, "day_stop"));
+				else {
+					if (start) {
+						convertEntityOnStart(entity, className);
 					}
-				} else if (className.equals("CREEPER")) {
-					int random = (int) (Math.random() * 100);
-					CreatureType type = null;
-
-					if (((Creeper) entity).isPowered()) {
-						if (random < randomMobsForPoweredCreeper.size()) {
-							type = randomMobsForPoweredCreeper.get(random);
-						}
-					} else {
-						if (random < randomMobsForNormalCreeper.size()) {
-							type = randomMobsForNormalCreeper.get(random);
-						}
+					else if (className.equals("CREEPER")) {
+						convertEntityOnStop(entity, className, ((Creeper) entity).isPowered() ? powered : normal);
 					}
-
-					convertEntity(entity, type);
 				}
 			}
 		}
 	}
 
-	private void populateRandomsMobs(ArrayList<CreatureType> matrix,
-			World world, boolean powered) {
+	private void convertEntityOnStart(Entity entity, String className) {
+		try {
+			CreatureType type = CreatureType.valueOf(className);
+
+			if (shouldConvertEntity(entity, type, true)) {
+				entity = convertEntity(entity, CreatureType.CREEPER);
+
+				if (shouldPowerCreeper(entity.getWorld(), type, true)) {
+					givePower(entity);
+				}
+			}
+		}
+		catch (IllegalArgumentException e) {
+		}
+	}
+
+	private void convertEntityOnStop(Entity entity, String className, ArrayList<CreatureType> list) {
+		CreatureType type = null;
+		int random = (int) (Math.random() * 100);
+
+		if (random < list.size()) {
+			type = list.get(random);
+		}
+
+		convertEntity(entity, type);
+	}
+
+	private void populateRandomsMobs(ArrayList<CreatureType> matrix, World world, boolean powered) {
 		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Integer> mobs = getCreeperTransformMatrix(world,
-				powered);
+		LinkedHashMap<String, Integer> mobs = getCreeperTransformMatrix(world, powered);
 
 		for (Iterator<?> i = mobs.keySet().iterator(); i.hasNext();) {
 			String name = (String) i.next();
@@ -631,63 +636,41 @@ public class Creepersday extends JavaPlugin {
 			for (int j = 0; j < number; j++) {
 				try {
 					matrix.add(CreatureType.valueOf(name));
-				} catch (IllegalArgumentException e) {
+				}
+				catch (IllegalArgumentException e) {
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private String[] buildStats(World world) {
-		String key = world.getEnvironment() + "." + world.getName() + ".stats";
-		ArrayList<LinkedHashMap<String, Object>> scores = new ArrayList<LinkedHashMap<String, Object>>();
-		LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(key);
-		LinkedHashMap<String, Object> playerDatas;
+		ArrayList<LinkedHashMap<String, Object>> scores = calculateScore(world);
 
-		for (Iterator<?> i = stats.keySet().iterator(); i.hasNext();) {
-			playerDatas = new LinkedHashMap<String, Object>();
-			String playerName = (String) i.next();
-			LinkedHashMap<String, Integer> playerStats = stats.get(playerName);
-			int kills = playerStats.containsKey("kills") ? playerStats
-					.get("kills") : 0;
-			int deaths = playerStats.containsKey("deaths") ? playerStats
-					.get("deaths") : 0;
-
-			playerDatas.put("name", playerName);
-			playerDatas.put("kills", kills);
-			playerDatas.put("deaths", deaths);
-			playerDatas.put("score", calculateScore(world, kills, deaths));
-
-			scores.add(playerDatas);
+		if (scores.size() == 0) {
+			return null;
 		}
 
-		Collections.sort(scores,
-				new Comparator<LinkedHashMap<String, Object>>() {
-					@Override
-					public int compare(LinkedHashMap<String, Object> o1,
-							LinkedHashMap<String, Object> o2) {
-						return (Integer) o2.get("score")
-								- (Integer) o1.get("score");
-					}
-				});
+		Collections.sort(scores, new Comparator<LinkedHashMap<String, Object>>() {
+			@Override
+			public int compare(LinkedHashMap<String, Object> o1, LinkedHashMap<String, Object> o2) {
+				return (Integer) o2.get("score") - (Integer) o1.get("score");
+			}
+		});
 
 		int maxPlayer = getIntProperty(world, "max_player_in_stats");
 		String[] top = new String[Math.min(maxPlayer, scores.size()) + 2];
+		LinkedHashMap<String, Object> playerDatas;
 
-		top[0] = ChatColor.LIGHT_PURPLE
-				+ getMessage(world, "stats_title").replace(
-						"<max_player_in_stats>", "" + maxPlayer);
+		top[0] = ChatColor.LIGHT_PURPLE + getMessage(world, "stats_title").replace("<max_player_in_stats>", "" + maxPlayer);
 		top[1] = ChatColor.GRAY + getMessage(world, "stats_explanations");
 
 		for (int i = 2; i < top.length; i++) {
 			playerDatas = (LinkedHashMap<String, Object>) scores.get(i - 2);
 
-			top[i] = ChatColor.YELLOW + "" + (i - 1) + ". " + ChatColor.GOLD
-					+ "" + playerDatas.get("score") + ChatColor.WHITE + " ("
-					+ ChatColor.GREEN + "" + playerDatas.get("kills")
-					+ ChatColor.WHITE + "/" + ChatColor.RED
-					+ playerDatas.get("deaths") + ChatColor.WHITE + ") "
-					+ ChatColor.YELLOW + "" + playerDatas.get("name");
+			top[i] = ChatColor.YELLOW + "" + (i - 1) + ". " + ChatColor.GOLD + "" + playerDatas.get("score")
+			    + ChatColor.WHITE + " (" + ChatColor.GREEN + "" + playerDatas.get("kills") + ChatColor.WHITE + "/"
+			    + ChatColor.RED + playerDatas.get("deaths") + ChatColor.WHITE + ") " + ChatColor.YELLOW + ""
+			    + playerDatas.get("name");
 
 			gratifyPlayer(world, i - 1, (String) playerDatas.get("name"));
 		}
@@ -695,30 +678,51 @@ public class Creepersday extends JavaPlugin {
 		return top;
 	}
 
+	private ArrayList<LinkedHashMap<String, Object>> calculateScore(World world) {
+		ArrayList<LinkedHashMap<String, Object>> scores = new ArrayList<LinkedHashMap<String, Object>>();
+		LinkedHashMap<String, Object> playerDatas;
+
+		@SuppressWarnings("unchecked")
+		LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(world
+		    .getEnvironment() + "." + world.getName() + ".stats");
+
+		for (Iterator<?> i = stats.keySet().iterator(); i.hasNext();) {
+			playerDatas = new LinkedHashMap<String, Object>();
+			String playerName = (String) i.next();
+			LinkedHashMap<String, Integer> playerStats = stats.get(playerName);
+			int kills = playerStats.containsKey("kills") ? playerStats.get("kills") : 0;
+			int deaths = playerStats.containsKey("deaths") ? playerStats.get("deaths") : 0;
+
+			playerDatas.put("name", playerName);
+			playerDatas.put("kills", kills);
+			playerDatas.put("deaths", deaths);
+			playerDatas.put("score", calculatePlayerScore(world, kills, deaths));
+
+			scores.add(playerDatas);
+		}
+
+		return scores;
+	}
+
+	private int calculatePlayerScore(World world, int kills, int deaths) {
+		return kills * getIntProperty(world, "points.kill_creeper") + deaths * getIntProperty(world, "points.player_death");
+	}
+
 	private void gratifyPlayer(World world, int rank, String playerName) {
-		String command = getStringProperty(world, "greetings.rank" + rank
-				+ ".command");
-		String message = getStringProperty(world, "greetings.rank" + rank
-				+ ".message");
+		String command = getStringProperty(world, "greetings.rank" + rank + ".command");
+		String message = getStringProperty(world, "greetings.rank" + rank + ".message");
 
 		if (command != null && !command.equals("")) {
-			getServer().dispatchCommand(getServer().getConsoleSender(),
-					command.replace("<player>", (String) playerName));
+			getServer().dispatchCommand(getServer().getConsoleSender(), command.replace("<player>", (String) playerName));
 		}
 
 		if (message != null && !message.equals("")) {
 			Player player = getServer().getPlayer(playerName);
 
 			if (player != null) {
-				player.sendMessage(message.replace("<player>",
-						(String) playerName));
+				player.sendMessage(message.replace("<player>", (String) playerName));
 			}
 		}
-	}
-
-	private int calculateScore(World world, int kills, int deaths) {
-		return kills * getIntProperty(world, "points.kill_creeper") + deaths
-				* getIntProperty(world, "points.player_death");
 	}
 
 	private void copyDocumentation() {
@@ -737,18 +741,21 @@ public class Creepersday extends JavaPlugin {
 	 * Ugly method to know the type of a creature outside of spawn event.
 	 */
 	private String getEntityType(Entity entity) {
-		String type = entity.getClass().getSimpleName().replace("Craft", "")
-				.toUpperCase();
+		String type = entity.getClass().getSimpleName().replace("Craft", "").toUpperCase();
 
 		if (type.equals("CAVESPIDER")) {
 			type = "CAVE_SPIDER";
-		} else if (type.equals("PIGZOMBIE")) {
+		}
+		else if (type.equals("PIGZOMBIE")) {
 			type = "PIG_ZOMBIE";
-		} else if (type.equals("ENDERDRAGON")) {
+		}
+		else if (type.equals("ENDERDRAGON")) {
 			type = "ENDER_DRAGON";
-		} else if (type.equals("MUSHROOMCOW")) {
+		}
+		else if (type.equals("MUSHROOMCOW")) {
 			type = "MUSHROOM_COW";
-		} else if (type.equals("MAGMACUBE")) {
+		}
+		else if (type.equals("MAGMACUBE")) {
 			type = "MAGMA_CUBE";
 		}
 
@@ -757,15 +764,13 @@ public class Creepersday extends JavaPlugin {
 
 	private boolean runCommandReloadConfig(CommandSender sender, String[] args) {
 		if (!sender.hasPermission("creepersday.reload")) {
-			sender.sendMessage(ChatColor.RED
-					+ "You don't have permission to reload creepersday config!");
+			sender.sendMessage(ChatColor.RED + "You don't have permission to reload creepersday config!");
 			return true;
 		}
 
 		if (args.length == 0) {
 			initConfig();
-			sender.sendMessage(ChatColor.GREEN
-					+ "Creepersday config has been reloaded!");
+			sender.sendMessage(ChatColor.GREEN + "Creepersday config has been reloaded!");
 			return true;
 		}
 
@@ -774,8 +779,7 @@ public class Creepersday extends JavaPlugin {
 
 	private boolean runCommandForceState(CommandSender sender, String[] args) {
 		if (!sender.hasPermission("creepersday.force")) {
-			sender.sendMessage(ChatColor.RED
-					+ "You don't have permission to force creepersday state!");
+			sender.sendMessage(ChatColor.RED + "You don't have permission to force creepersday state!");
 			return true;
 		}
 
@@ -784,7 +788,8 @@ public class Creepersday extends JavaPlugin {
 
 		if (inGame && args.length == 1) {
 			world = ((Player) sender).getWorld();
-		} else if (args.length != 2) {
+		}
+		else if (args.length != 2) {
 			return false;
 		}
 
@@ -841,7 +846,8 @@ public class Creepersday extends JavaPlugin {
 
 			try {
 				node = (Map<String, Object>) o;
-			} catch (ClassCastException e) {
+			}
+			catch (ClassCastException e) {
 				return null;
 			}
 		}
@@ -883,7 +889,7 @@ public class Creepersday extends JavaPlugin {
 	// Internal class
 
 	private class CreepersdayRunnable implements Runnable {
-		private World world;
+		private World	world;
 
 		public CreepersdayRunnable(World world) {
 			this.world = world;
@@ -895,7 +901,8 @@ public class Creepersday extends JavaPlugin {
 				if (shouldCreepersdayStop(world)) {
 					stopCreepersday(world);
 				}
-			} else {
+			}
+			else {
 				if (shouldCreepersdayStart(world)) {
 					startCreepersday(world);
 				}
