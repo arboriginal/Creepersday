@@ -22,9 +22,9 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.Inventory;
@@ -132,8 +132,8 @@ public class Creepersday extends JavaPlugin {
 		    || (world.getTime() >= getIntProperty(world, "advanced.stop_after"));
 	}
 
-	public boolean shouldConvertEntity(Entity entity, CreatureType type, boolean start) {
-		if (type == CreatureType.WOLF && ((Wolf) entity).isTamed()) {
+	public boolean shouldConvertEntity(Entity entity, EntityType type, boolean start) {
+		if (type == EntityType.WOLF && ((Wolf) entity).isTamed()) {
 			return false;
 		}
 
@@ -142,7 +142,7 @@ public class Creepersday extends JavaPlugin {
 		return testPercentChance(entity.getWorld(), key + type + ".to_creeper");
 	}
 
-	public boolean shouldPowerCreeper(World world, CreatureType type, boolean start) {
+	public boolean shouldPowerCreeper(World world, EntityType type, boolean start) {
 		String key = (start ? "start" : "during") + "_creepersday.mobs_transformation.";
 
 		return testPercentChance(world, key + type + ".get_power");
@@ -158,9 +158,7 @@ public class Creepersday extends JavaPlugin {
 		LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(key);
 		LinkedHashMap<String, Integer> playerStats = stats.containsKey(playerName) ? stats.get(playerName)
 		    : new LinkedHashMap<String, Integer>();
-
-		int stat = playerStats.containsKey(event) ? playerStats.get(event) : 0;
-		playerStats.put(event, ++stat);
+		playerStats.put(event, playerStats.containsKey(event) ? playerStats.get(event) + 1 : 1);
 		stats.put(playerName, playerStats);
 		setProperty(key, stats);
 	}
@@ -188,7 +186,7 @@ public class Creepersday extends JavaPlugin {
 		return (getIntProperty(world, key) >= 100 * Math.random());
 	}
 
-	public Entity convertEntity(Entity entity, CreatureType type) {
+	public Entity convertEntity(Entity entity, EntityType type) {
 		Location loc = entity.getLocation();
 		World world = entity.getWorld();
 
@@ -545,8 +543,8 @@ public class Creepersday extends JavaPlugin {
 		Location loc = player.getLocation();
 		Inventory inv = player.getInventory();
 
-		for (Iterator<?> i = stuff.keySet().iterator(); i.hasNext();) {
-			String name = (String) i.next();
+		for (Iterator<String> i = stuff.keySet().iterator(); i.hasNext();) {
+			String name = i.next();
 			ItemStack item = new ItemStack(Material.getMaterial(name), stuff.get(name));
 
 			if (inv.firstEmpty() == -1) {
@@ -564,8 +562,8 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	private void convertEntities(World world, boolean start) {
-		ArrayList<CreatureType> normal = new ArrayList<CreatureType>();
-		ArrayList<CreatureType> powered = new ArrayList<CreatureType>();
+		ArrayList<EntityType> normal = new ArrayList<EntityType>();
+		ArrayList<EntityType> powered = new ArrayList<EntityType>();
 
 		if (!start) {
 			populateRandomsMobs(normal, world, false);
@@ -600,10 +598,10 @@ public class Creepersday extends JavaPlugin {
 
 	private void convertEntityOnStart(Entity entity, String className) {
 		try {
-			CreatureType type = CreatureType.valueOf(className);
+			EntityType type = EntityType.valueOf(className);
 
 			if (shouldConvertEntity(entity, type, true)) {
-				entity = convertEntity(entity, CreatureType.CREEPER);
+				entity = convertEntity(entity, EntityType.CREEPER);
 
 				if (shouldPowerCreeper(entity.getWorld(), type, true)) {
 					givePower(entity);
@@ -614,8 +612,8 @@ public class Creepersday extends JavaPlugin {
 		}
 	}
 
-	private void convertEntityOnStop(Entity entity, String className, ArrayList<CreatureType> list) {
-		CreatureType type = null;
+	private void convertEntityOnStop(Entity entity, String className, ArrayList<EntityType> list) {
+		EntityType type = null;
 		int random = (int) (Math.random() * 100);
 
 		if (random < list.size()) {
@@ -625,17 +623,17 @@ public class Creepersday extends JavaPlugin {
 		convertEntity(entity, type);
 	}
 
-	private void populateRandomsMobs(ArrayList<CreatureType> matrix, World world, boolean powered) {
+	private void populateRandomsMobs(ArrayList<EntityType> matrix, World world, boolean powered) {
 		@SuppressWarnings("unchecked")
 		LinkedHashMap<String, Integer> mobs = getCreeperTransformMatrix(world, powered);
 
-		for (Iterator<?> i = mobs.keySet().iterator(); i.hasNext();) {
-			String name = (String) i.next();
+		for (Iterator<String> i = mobs.keySet().iterator(); i.hasNext();) {
+			String name = i.next();
 			int number = mobs.get(name);
 
 			for (int j = 0; j < number; j++) {
 				try {
-					matrix.add(CreatureType.valueOf(name));
+					matrix.add(EntityType.valueOf(name));
 				}
 				catch (IllegalArgumentException e) {
 				}
@@ -686,9 +684,9 @@ public class Creepersday extends JavaPlugin {
 		LinkedHashMap<String, LinkedHashMap<String, Integer>> stats = (LinkedHashMap<String, LinkedHashMap<String, Integer>>) getProperty(world
 		    .getEnvironment() + "." + world.getName() + ".stats");
 
-		for (Iterator<?> i = stats.keySet().iterator(); i.hasNext();) {
+		for (Iterator<String> i = stats.keySet().iterator(); i.hasNext();) {
 			playerDatas = new LinkedHashMap<String, Object>();
-			String playerName = (String) i.next();
+			String playerName = i.next();
 			LinkedHashMap<String, Integer> playerStats = stats.get(playerName);
 			int kills = playerStats.containsKey("kills") ? playerStats.get("kills") : 0;
 			int deaths = playerStats.containsKey("deaths") ? playerStats.get("deaths") : 0;

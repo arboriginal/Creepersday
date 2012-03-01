@@ -1,9 +1,9 @@
 package me.arboriginal.Creepersday;
 
 import org.bukkit.World;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -27,16 +27,16 @@ public class CreepersdayEntityListener implements Listener {
 			return;
 		}
 
-		CreatureType type = event.getCreatureType();
+		EntityType type = event.getEntityType();
 
-		if (type != CreatureType.CREEPER) {
+		if (type != EntityType.CREEPER) {
 			Entity entity = event.getEntity();
 
 			if (entity != null) {
 				World world = entity.getWorld();
 
 				if (plugin.isCreepersday(world) && plugin.shouldConvertEntity(entity, type, false)) {
-					entity = plugin.convertEntity(entity, CreatureType.CREEPER);
+					entity = plugin.convertEntity(entity, EntityType.CREEPER);
 
 					if (plugin.shouldPowerCreeper(world, type, false)) {
 						plugin.givePower(entity);
