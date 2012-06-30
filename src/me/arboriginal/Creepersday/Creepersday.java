@@ -101,7 +101,7 @@ public class Creepersday extends JavaPlugin {
 	}
 
 	public boolean isCreepersday(World world) {
-		return (getCurrentStatus(world).equals("active"));
+		return (world != null) && (getCurrentStatus(world).equals("active"));
 	}
 
 	public boolean shouldCreepersdayStart(World world) {

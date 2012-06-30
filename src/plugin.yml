@@ -1,6 +1,6 @@
 name: Creepersday
 description: Randomly, be invaded by creepers.
-version: 1.7
+version: 1.71
 author: arboriginal
 website: http://dev.bukkit.org/server-mods/creepersday/
 dev-url: https://github.com/arboriginal/Creepersday
@@ -10,7 +10,7 @@ commands:
     creepersday:
         description: Force starting/stopping a creepers' day
         usage: /creepersday <start/stop> [world_name (required in console)]
-    
+
     creepersday-reload-config:
         description: Reload config files ("advanced" section values need a restart)
         usage: /creepersday-reload-config

@@ -1,5 +1,5 @@
 The file config.yml contains the parameters that the plugin will use.
-These will serve for all of your worlds if they are not overriden in the files
+These will serve for all of your worlds if they are not overridden in the files
 located into "Worlds_configs" directory.
 
 In this folder, sub-directories exist: "NORMAL" and "NETHER."
@@ -9,7 +9,7 @@ They allow to group configurations for your worlds by environment.
 To override a setting for one of your worlds, simply copy it into the
 file bearing his name. If you copy this parameter in the file
 named "default_NORMAL_worlds" for example, this parameter will be used in all
-worlds of type "NORMAL", unless of course you have overriden for a world
+worlds of type "NORMAL", unless of course you have overridden for a world
 in particular.
 
 So you can inherit all the settings that follow at your convenience.
@@ -43,12 +43,12 @@ You can easily add more (and of course set different ones for each worlds).
 Look at the "messages" section for more explanation on how to change
 these messages, and add other languages.
 
-The default values ​​are "EN" and "FR".
+The default values are "EN" and "FR".
 
 * status
 
 Indicates the default status for creepers' day.
-The possible values ​​are:
+The possible values are:
 - active (begin with a creepers' day)
 - random (IMHO, the best choice, starts creepers' days randomly)
 - disable (creepers' days will never be triggered)
@@ -60,7 +60,7 @@ It will always be possible to force the startup or shutdown with the command
 
 This is the percent chance that one creepers' day is activated.
 A test is performed once a day (morning).
-Possible values ​​are 0 to 100.
+Possible values are 0 to 100.
 
 * display_stats
 
@@ -140,7 +140,7 @@ Then... Launch them during a creepers' day, you'll see :)
 This subsection lists for each mob, the percent chance that it becomes a creeper
 (to_creeper), and in this case, the percentage it becomes powered.
 
-See this page to know whiwh names you can use:
+See this page to know which names you can use:
 http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
 
 Tamed wolves will not be affected by the percentages of WOLF.
@@ -177,7 +177,7 @@ the percentage chance a creeper dies without being transformed into another mob.
 This is why I put a comment line "nothing" into the default settings.
 You can remove it if you wish.
 
-See this page to know whiwh names you can use:
+See this page to know which names you can use:
 http://jd.bukkit.org/doxygen/d5/d27/namespaceorg_1_1bukkit_1_1entity.html#ad935086a9b163a1c8d2fc5099be3ff34
 
 
